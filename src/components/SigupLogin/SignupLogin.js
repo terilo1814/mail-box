@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react';
 import { Container, Card, Form, Button } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
 
-export const SignupLogin = () => {
+export const SignupLogin = ({ onLogin }) => {
     const [toggle, setToggle] = useState(false);
 
     const emailRef = useRef('');
@@ -42,12 +42,12 @@ export const SignupLogin = () => {
             }
             url = 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCE9Ri0f_1n-d_Z-CFFDTIrtb1pk1NRfJQ'
         }
-        postData(url, enteredMail, enteredPassword)
+        postData(url, enteredMail, enteredPassword, onLogin)
     }
 
 
 
-    const postData = async (url, enteredMail, enteredPassword) => {
+    const postData = async (url, enteredMail, enteredPassword, onLogin) => {
         try {
             const response = await fetch(url, {
                 method: 'POST',
@@ -66,6 +66,10 @@ export const SignupLogin = () => {
                 }
                 emailRef.current.value = ""
                 passwordRef.current.value = ""
+
+                const data = await response.json()
+                const { idToken: token } = data
+                onLogin(token, enteredMail)
             }
             else {
                 const errorMessage = 'Failed to post data'
