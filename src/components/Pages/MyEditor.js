@@ -1,68 +1,77 @@
 import React, { useState } from 'react';
-import { EditorState } from 'draft-js';
+import { EditorState, convertToRaw } from 'draft-js';
 import { Editor } from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { Container, Card, Form, Button } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 
-
 export const MyEditor = () => {
-
-    const [editorState, setEditorState] = useState(() =>
-        EditorState.createEmpty()
-    );
-
+    const [editorState, setEditorState] = useState(EditorState.createEmpty());
     const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
-    const currentMail = useSelector((state) => state.auth.email)
-
-
-
+    const currentMail = useSelector((state) => state.auth.email);
     const [to, setTo] = useState('');
     const [subject, setSubject] = useState('');
     const [message, setMessage] = useState('');
 
-
-    const submitHandler = (e) => {
+    const submitHandler = async (e) => {
         e.preventDefault();
 
         if (isLoggedIn) {
             if (!to || !subject || !message) {
-                alert('Please fill all the details')
+                alert('Please fill in all the details');
+                return;
             }
-            postData()
+            try {
+                await postData();
+                setTo('');
+                setSubject('');
+                setMessage('');
+                setEditorState(EditorState.createEmpty());
+            } catch (error) {
+                alert('Failed to send the mail');
+            }
         }
-
-
-        setTo('');
-        setSubject('');
-        setMessage('');
     };
 
     const postData = async () => {
-        try {
-            const url = 'https://mail-box-4cd6a-default-rtdb.firebaseio.com/mailbox.json'
-            const response = await fetch(url, {
-                method: 'POST',
-                body: JSON.stringify({
-                    to,
-                    subject,
-                    message,
-                    sender: currentMail
-                }),
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            })
-            if (response.ok) {
-                alert('Mail send successfully')
-            }
-            else {
-                throw new Error('Failed to send the mail')
-            }
-        } catch (error) {
-            alert(error)
+
+        const updatedReceiver = to.replace(/[.@]/g, "");
+        const updatedSender = currentMail.replace(/[.@]/g, "")
+
+        const sentData = {
+            to,
+            subject,
+            message,
+        };
+
+        const receiveData = {
+            from: currentMail,
+            subject,
+            message
         }
-    }
+
+
+        const response = await fetch(`https://mail-box-4cd6a-default-rtdb.firebaseio.com/mailbox/users/${updatedSender}/sent.json`, {
+            method: 'POST',
+            body: JSON.stringify(sentData),
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+
+        const res = await fetch(`https://mail-box-4cd6a-default-rtdb.firebaseio.com/mailbox/users/${updatedReceiver}/received.json`, {
+            method: 'POST',
+            body: JSON.stringify(receiveData),
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+
+        if (response.ok && res.ok) {
+            alert('Mail sent successfully')
+
+        }
+    };
 
 
 
@@ -87,9 +96,12 @@ export const MyEditor = () => {
                             <Form.Control as='textarea' rows={5} value={message} onChange={(e) => setMessage(e.target.value)} />
                         </Form.Group>
 
-                        <Editor editorState={editorState} />
+                        <Editor editorState={editorState} onEditorStateChange={setEditorState} />
+
                         <div className='text-end'>
-                            <Button variant='primary' type='submit'>Send</Button>
+                            <Button variant='primary' type='submit'>
+                                Send
+                            </Button>
                         </div>
                     </Form>
                 </Card.Body>

@@ -21,15 +21,14 @@ export const Header = () => {
             <Container>
                 <Navbar.Brand href="#home" style={{ color: 'blue', fontFamily: 'sans-serif' }}>Mail Box Client</Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                <Nav className="me-auto">
-                    <Nav.Link href="#home">Compose </Nav.Link>
-                    <Nav.Link href="#link">Inbox</Nav.Link>
-                    <Nav.Link href="#link">Sent Mail</Nav.Link>
-                </Nav>
-                <div className='text-end'>
+                <Navbar.Collapse id="basic-navbar-nav">
+                    <Nav className="me-auto">
+                        <Nav.Link href="#home">Compose </Nav.Link>
+                        <Nav.Link href="#link">Inbox</Nav.Link>
+                        <Nav.Link href="#link">Sent Mail</Nav.Link>
+                    </Nav>
                     <Button variant="primary" onClick={logoutHandler}>Log Out</Button>
-                </div>
-
+                </Navbar.Collapse>
             </Container>
         </Navbar>
     );
