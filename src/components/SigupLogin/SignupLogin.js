@@ -1,8 +1,12 @@
 import React, { useRef, useState } from 'react';
 import { Container, Card, Form, Button } from 'react-bootstrap';
-import { NavLink } from 'react-router-dom';
+import { useNavigate, NavLink } from 'react-router-dom';
+
 
 export const SignupLogin = ({ onLogin }) => {
+
+    const navigate = useNavigate()
+
     const [toggle, setToggle] = useState(false);
 
     const emailRef = useRef('');
@@ -68,8 +72,9 @@ export const SignupLogin = ({ onLogin }) => {
                 passwordRef.current.value = ""
 
                 const data = await response.json()
-                const { idToken: token } = data
-                onLogin(token, enteredMail)
+                onLogin(data)
+                navigate('/mail')
+
             }
             else {
                 const errorMessage = 'Failed to post data'
@@ -82,6 +87,7 @@ export const SignupLogin = ({ onLogin }) => {
     }
 
 
+
     return (
         <Container
             className='d-flex justify-content-center align-items-center'
@@ -89,12 +95,12 @@ export const SignupLogin = ({ onLogin }) => {
         >
             <Card
                 className='shadow-lg border-0'
-                style={{ width: '420px', height: '550px', background: '#f9f8fa' }}
+                style={{ width: '420px', height: '550px', background: '#f9f8fa', marginTop: '8rem' }}
             >
                 <Card.Body>
                     <h3
                         className='d-flex justify-content-center align-items-center'
-                        style={{ color: 'rgb(255, 217, 90)' }}
+                        style={{ color: 'rgb(249, 155, 125)' }}
                     >
                         {toggle ? 'Login' : 'SignUp'}
                     </h3>
@@ -122,7 +128,7 @@ export const SignupLogin = ({ onLogin }) => {
 
                         <Button
                             className='d-block mx-auto mt-5'
-                            style={{ color: 'black', background: 'rgb(255, 217, 90)', border: 'none' }}
+                            style={{ color: 'black', background: 'rgb(249, 155, 125)', border: 'none' }}
                             type='submit'
                         >
                             {toggle ? 'Login' : 'SignUp'}
@@ -146,5 +152,6 @@ export const SignupLogin = ({ onLogin }) => {
                 </Card.Body>
             </Card>
         </Container>
-    );
+
+    )
 };
