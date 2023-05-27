@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { EditorState, convertToRaw } from 'draft-js';
+import React, { useEffect, useState } from 'react';
+import { EditorState } from 'draft-js';
 import { Editor } from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { Container, Card, Form, Button } from 'react-bootstrap';
@@ -35,46 +35,62 @@ export const MyEditor = () => {
 
     const postData = async () => {
 
-        const updatedReceiver = to.replace(/[.@]/g, "");
-        const updatedSender = currentMail.replace(/[.@]/g, "")
+        const updatedReceiver = to.replace(/[.@]/g, '');
+        const updatedSender = currentMail.replace(/[.@]/g, '');
+
+        const date = new Date();
+        const options = {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            timeZone: 'IST',
+        };
+        const formatter = new Intl.DateTimeFormat('en-IN', options);
+        const formattedDate = formatter.format(date);
 
         const sentData = {
             to,
             subject,
-            message,
+            message: message,
+            date: formattedDate,
         };
 
         const receiveData = {
             from: currentMail,
             subject,
-            message
-        }
+            message: message,
+            date: formattedDate,
+        };
 
+        const response = await fetch(
+            `https://mail-box-4cd6a-default-rtdb.firebaseio.com//mailbox/users/${updatedSender}/sent.json`,
+            {
+                method: 'POST',
+                body: JSON.stringify(sentData),
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
 
-        const response = await fetch(`https://mail-box-4cd6a-default-rtdb.firebaseio.com/mailbox/users/${updatedSender}/sent.json`, {
-            method: 'POST',
-            body: JSON.stringify(sentData),
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
-
-        const res = await fetch(`https://mail-box-4cd6a-default-rtdb.firebaseio.com/mailbox/users/${updatedReceiver}/received.json`, {
-            method: 'POST',
-            body: JSON.stringify(receiveData),
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
+        const res = await fetch(
+            `https://mail-box-4cd6a-default-rtdb.firebaseio.com//mailbox/users/${updatedReceiver}/received.json`,
+            {
+                method: 'POST',
+                body: JSON.stringify(receiveData),
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
 
         if (response.ok && res.ok) {
-            alert('Mail sent successfully')
-
+            alert('Mail sent successfully');
         }
     };
-
-
-
 
     return (
         <Container className='d-flex justify-content-center align-items-center' style={{ minHeight: '100vh', marginTop: '3rem' }}>
@@ -93,10 +109,14 @@ export const MyEditor = () => {
 
                         <Form.Group className='mb-3' style={{ marginTop: '2rem' }} controlId='formTextArea'>
                             <Form.Label>Message:</Form.Label>
-                            <Form.Control as='textarea' rows={5} value={message} onChange={(e) => setMessage(e.target.value)} />
+                            <Editor
+                                editorState={editorState}
+                                onEditorStateChange={(updatedEditorState) => {
+                                    setEditorState(updatedEditorState);
+                                    setMessage(updatedEditorState.getCurrentContent().getPlainText());
+                                }}
+                            />
                         </Form.Group>
-
-                        <Editor editorState={editorState} onEditorStateChange={setEditorState} />
 
                         <div className='text-end'>
                             <Button variant='primary' type='submit'>
