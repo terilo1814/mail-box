@@ -3,10 +3,14 @@ import { Button, Navbar, Nav, Container } from 'react-bootstrap';
 import { logout } from '../../states/Reducers/AuthReducer';
 import { useDispatch } from 'react-redux';
 import { NavLink, useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 export const Header = () => {
+
+
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const count = useSelector((state) => state.auth.count)
 
     const logoutHandler = () => {
         dispatch(logout());
@@ -27,7 +31,7 @@ export const Header = () => {
                             Compose
                         </NavLink>
                         <NavLink to='/inbox' className='nav-link' activeClassName='active'  >
-                            Inbox
+                            Inbox {count ? <span style={{color:'white',background:'blue',borderRadius:'20px',padding:'0 5px'}}>{count}</span>:''}
                         </NavLink>
                         <NavLink to='/sent' className='nav-link' activeClassName='active'>
                             Sent Mail

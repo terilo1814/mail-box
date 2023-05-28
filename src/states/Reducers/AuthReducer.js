@@ -5,7 +5,9 @@ const authSlice = createSlice({
     initialState: {
         token: '',
         email: '',
-        isLoggedIn: false
+        isLoggedIn: false,
+        count: 0,
+        receivedMails: []
     },
     reducers: {
         login(state, action) {
@@ -19,10 +21,16 @@ const authSlice = createSlice({
             state.token = "";
             state.email = "";
             state.isLoggedIn = false;
+        },
+        setReceivedMails(state, action) {
+            state.receivedMails = action.payload
+            state.count = action.payload?.filter((mail) => !mail.seen).length;
+            console.log(state.count)
+
         }
     }
 });
 
 const authReducer = authSlice.reducer;
-export const { login, logout } = authSlice.actions;
+export const { login, logout, setCount, setReceivedMails } = authSlice.actions;
 export default authReducer;

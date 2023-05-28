@@ -4,17 +4,27 @@ import { Editor } from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { Container, Card, Form, Button } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
+import { fetchReceivedMails } from '../Api/ApiContainer';
+import { useDispatch } from 'react-redux';
+
+
 
 export const MyEditor = () => {
+    const dispatch=useDispatch()
     const [editorState, setEditorState] = useState(EditorState.createEmpty());
     const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
     const currentMail = useSelector((state) => state.auth.email);
     const [to, setTo] = useState('');
     const [subject, setSubject] = useState('');
     const [message, setMessage] = useState('');
+    const [sending, setSending] = useState(false)
+
+
 
     const submitHandler = async (e) => {
         e.preventDefault();
+
+
 
         if (isLoggedIn) {
             if (!to || !subject || !message) {
@@ -22,6 +32,7 @@ export const MyEditor = () => {
                 return;
             }
             try {
+                setSending(true)
                 await postData();
                 setTo('');
                 setSubject('');
@@ -31,6 +42,8 @@ export const MyEditor = () => {
                 alert('Failed to send the mail');
             }
         }
+        setSending(false)
+
     };
 
     const postData = async () => {
@@ -63,6 +76,7 @@ export const MyEditor = () => {
             subject,
             message: message,
             date: formattedDate,
+            
         };
 
         const response = await fetch(
@@ -88,6 +102,7 @@ export const MyEditor = () => {
         );
 
         if (response.ok && res.ok) {
+            fetchReceivedMails(currentMail,dispatch);
             alert('Mail sent successfully');
         }
     };
@@ -120,7 +135,7 @@ export const MyEditor = () => {
 
                         <div className='text-end'>
                             <Button variant='primary' type='submit'>
-                                Send
+                                {sending ? 'Sending...' : 'Send Email'}
                             </Button>
                         </div>
                     </Form>

@@ -1,11 +1,13 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { login } from './states/Reducers/AuthReducer';
+import { login, setReceivedMails } from './states/Reducers/AuthReducer';
 import { Header } from './components/Header/Header';
 import { MyEditor } from './components/Pages/MyEditor';
 import { SignupLogin } from './components/SigupLogin/SignupLogin';
 import { Routes, Route } from 'react-router-dom';
 import { InboxPage } from './components/Pages/InboxPage';
+import { fetchReceivedMails } from './components/Api/ApiContainer';
+
 
 function App() {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
@@ -32,6 +34,16 @@ function App() {
   };
 
 
+
+
+  const currentMail = useSelector((state) => state.auth.email);
+ 
+  useEffect(() => {
+    if(currentMail)
+      fetchReceivedMails(currentMail,dispatch);
+  }, [currentMail]);
+
+  
   return (
     <Routes>
       {isLoggedIn ? (
