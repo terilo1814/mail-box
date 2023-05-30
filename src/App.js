@@ -43,11 +43,13 @@ function App() {
 
   useEffect(() => {
     if (currentMail) {
-      fetchReceivedMails(currentMail, dispatch);
-      // fetchSentMails(currentMail, dispatch)
+      setInterval(() => {
+        fetchReceivedMails(currentMail, dispatch);
+      }, 2000)
     }
-
   }, [currentMail]);
+
+
 
 
   return (
