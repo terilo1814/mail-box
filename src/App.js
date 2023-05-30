@@ -6,7 +6,9 @@ import { MyEditor } from './components/Pages/MyEditor';
 import { SignupLogin } from './components/SigupLogin/SignupLogin';
 import { Routes, Route } from 'react-router-dom';
 import { InboxPage } from './components/Pages/InboxPage';
-import { fetchReceivedMails } from './components/Api/ApiContainer';
+import { fetchReceivedMails, fetchSentMails } from './components/Api/ApiContainer';
+import { SendMail } from './components/Pages/SendMail';
+
 
 
 function App() {
@@ -26,6 +28,7 @@ function App() {
     }
   }, []);
 
+
   // SENDING DATA TO REDUX
   const loginHandler = (data) => {
     localStorage.setItem('token', data.idToken);
@@ -37,13 +40,16 @@ function App() {
 
 
   const currentMail = useSelector((state) => state.auth.email);
- 
+
   useEffect(() => {
-    if(currentMail)
-      fetchReceivedMails(currentMail,dispatch);
+    if (currentMail) {
+      fetchReceivedMails(currentMail, dispatch);
+      // fetchSentMails(currentMail, dispatch)
+    }
+
   }, [currentMail]);
 
-  
+
   return (
     <Routes>
       {isLoggedIn ? (
@@ -62,11 +68,15 @@ function App() {
             <Header />
             <InboxPage />
           </div>} />
+
+          <Route path='/sent' element={<div>
+            <Header />
+            <SendMail /></div>} />
         </>
 
       ) : (
         <Route
-           path="/"
+          path="/"
           element={<SignupLogin onLogin={loginHandler} />}
         />
       )

@@ -125,7 +125,7 @@ export const InboxPage = () => {
                     ''
                   )}
 
-                  <h5 style={{ display: 'inline-block', cursor: 'pointer' }}
+                  <h5 style={{ display: 'inline-block', cursor: 'pointer',marginLeft: '15px' }}
                     onClick={() => showFullMessage(mail)}>{mail.subject}</h5>
                   <p className='text-muted' style={{ marginLeft: '15px' }}>{mail.from}</p>
                 </div>
@@ -137,7 +137,7 @@ export const InboxPage = () => {
                   Delete
                 </Button>
               </div>
-              {showMessage === mail.id ? <Card.Text>{mail.message}</Card.Text> : ''}
+              {showMessage === mail.id ? <Card.Text style={{marginLeft: '15px' }}>{mail.message}</Card.Text> : ''}
 
             </Card.Body>
           </Card>

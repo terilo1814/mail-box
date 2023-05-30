@@ -7,7 +7,8 @@ const authSlice = createSlice({
         email: '',
         isLoggedIn: false,
         count: 0,
-        receivedMails: []
+        receivedMails: [],
+        sentMails: []
     },
     reducers: {
         login(state, action) {
@@ -25,12 +26,14 @@ const authSlice = createSlice({
         setReceivedMails(state, action) {
             state.receivedMails = action.payload
             state.count = action.payload?.filter((mail) => !mail.seen).length;
-
+        },
+        setSendMails(state, action) {
+            state.sentMails = action.payload
 
         }
     }
 });
 
 const authReducer = authSlice.reducer;
-export const { login, logout, setCount, setReceivedMails } = authSlice.actions;
+export const { login, logout, setCount, setReceivedMails ,setSendMails} = authSlice.actions;
 export default authReducer;
