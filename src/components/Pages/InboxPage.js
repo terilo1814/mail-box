@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Card } from 'react-bootstrap';
+import { Container, Card, Button } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { setReceivedMails } from '../../states/Reducers/AuthReducer';
 
@@ -15,9 +15,6 @@ export const InboxPage = () => {
   // useEffect(() => {
   //   fetchReceivedMails();
   // }, []);
-
-
-
 
 
   // const fetchReceivedMails = async () => {
@@ -64,7 +61,7 @@ export const InboxPage = () => {
         }
       )
       if (response.ok) {
-        dispatch(setReceivedMails( receivedMails.map((m) => (m.id === mail.id ? { ...m, seen: true } : m))));
+        dispatch(setReceivedMails(receivedMails.map((m) => (m.id === mail.id ? { ...m, seen: true } : m))));
       } else {
         throw new Error('Failed to update the message');
       }
@@ -77,9 +74,31 @@ export const InboxPage = () => {
 
   const showFullMessage = async (mail) => {
     setShowMessage(mail.id)
-    updateData(mail)
-
+    if (!mail.seen)
+      updateData(mail)
   }
+
+  const deleteHandler = async (mail) => {
+    const id = mail.id;
+    try {
+      const updatedSender = currentMail.replace(/[.@]/g, "");
+      const response = await fetch(
+        `https://mail-box-4cd6a-default-rtdb.firebaseio.com/mailbox/users/${updatedSender}/received/${id}.json`,
+        {
+          method: 'DELETE',
+        }
+      );
+      if (response.ok) {
+        dispatch(setReceivedMails(receivedMails.filter((m) => m.id !== id)));
+      } else {
+        throw new Error('Failed to delete the mail');
+      }
+    } catch (error) {
+      alert(error);
+    }
+  };
+
+
 
 
   return (
@@ -91,10 +110,8 @@ export const InboxPage = () => {
         receivedMails.map((mail) => (
           <Card key={mail.id} className='mb-3'>
             <Card.Body>
-              <div className='d-flex justify-content-between'
-                onClick={() => showFullMessage(mail)} style={{ cursor: 'pointer', }}>
+              <div className='d-flex justify-content-between'>
                 <div >
-
                   {!mail.seen ? (
                     <p
                       className='blue-dot'
@@ -108,12 +125,17 @@ export const InboxPage = () => {
                     ''
                   )}
 
-                  <h5 style={{ display: 'inline-block' }}>{mail.subject}</h5>
+                  <h5 style={{ display: 'inline-block', cursor: 'pointer' }}
+                    onClick={() => showFullMessage(mail)}>{mail.subject}</h5>
                   <p className='text-muted' style={{ marginLeft: '15px' }}>{mail.from}</p>
                 </div>
                 <div>
                   <p className='text-muted'>{mail.date}</p>
                 </div>
+                <Button style={{ color: 'red', background: 'white', border: '1px solid red', marginTop: '22px' }}
+                  onClick={() => deleteHandler(mail)}>
+                  Delete
+                </Button>
               </div>
               {showMessage === mail.id ? <Card.Text>{mail.message}</Card.Text> : ''}
 

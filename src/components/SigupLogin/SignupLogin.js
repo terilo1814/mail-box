@@ -73,7 +73,7 @@ export const SignupLogin = ({ onLogin }) => {
 
                 const data = await response.json()
                 onLogin(data)
-                navigate('/mail')
+                navigate('/')
 
             }
             else {

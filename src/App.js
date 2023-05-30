@@ -49,7 +49,7 @@ function App() {
       {isLoggedIn ? (
         <>
           <Route
-            path='/mail'
+            path='/'
             element={
               <div>
                 <Header />
@@ -66,7 +66,7 @@ function App() {
 
       ) : (
         <Route
-          exact path="/"
+           path="/"
           element={<SignupLogin onLogin={loginHandler} />}
         />
       )

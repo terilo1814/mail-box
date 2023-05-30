@@ -27,7 +27,7 @@ export const Header = () => {
                 <Navbar.Toggle aria-controls='basic-navbar-nav' />
                 <Navbar.Collapse id='basic-navbar-nav'>
                     <Nav className='me-auto'>
-                        <NavLink to='/mail' className='nav-link' activeClassName='active' >
+                        <NavLink to='/' className='nav-link' activeClassName='active' >
                             Compose
                         </NavLink>
                         <NavLink to='/inbox' className='nav-link' activeClassName='active'  >

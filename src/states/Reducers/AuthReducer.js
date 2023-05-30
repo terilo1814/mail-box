@@ -25,7 +25,7 @@ const authSlice = createSlice({
         setReceivedMails(state, action) {
             state.receivedMails = action.payload
             state.count = action.payload?.filter((mail) => !mail.seen).length;
-            console.log(state.count)
+
 
         }
     }
