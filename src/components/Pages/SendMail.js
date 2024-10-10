@@ -18,7 +18,7 @@ export const SendMail = () => {
             fetchSentMails(currentMail, dispatch)
         }
 
-    }, [currentMail]);
+    }, [currentMail,dispatch]);
 
 
 

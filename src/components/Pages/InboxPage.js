@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Container, Card, Button } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { setReceivedMails } from '../../states/Reducers/AuthReducer';

@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { login, setReceivedMails } from './states/Reducers/AuthReducer';
+import { login} from './states/Reducers/AuthReducer';
 import { Header } from './components/Header/Header';
 import { MyEditor } from './components/Pages/MyEditor';
 import { SignupLogin } from './components/SigupLogin/SignupLogin';
 import { Routes, Route } from 'react-router-dom';
 import { InboxPage } from './components/Pages/InboxPage';
-import { fetchReceivedMails, fetchSentMails } from './components/Api/ApiContainer';
+import { fetchReceivedMails } from './components/Api/ApiContainer';
 import { SendMail } from './components/Pages/SendMail';
 
 
@@ -26,7 +26,7 @@ function App() {
         email: initialMail,
       }));
     }
-  }, []);
+  });
 
 
   // SENDING DATA TO REDUX
