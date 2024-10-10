@@ -38,17 +38,23 @@ function App() {
 
 
 
-
   const currentMail = useSelector((state) => state.auth.email);
 
   useEffect(() => {
-    if (currentMail) {
-      setInterval(() => {
-        fetchReceivedMails(currentMail, dispatch);
-      }, 2000)
-    }
-  }, [currentMail]);
+    let intervalId; 
 
+    if (currentMail) {
+      intervalId = setInterval(() => {
+        fetchReceivedMails(currentMail, dispatch);
+      }, 2000);
+    } else {
+      clearInterval(intervalId);
+    }
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [currentMail, dispatch]);
 
 
 
